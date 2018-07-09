@@ -11,9 +11,9 @@ class JsonFileStorage
       JSON.parse(input)
     end
 
-    data = JSON.parse(input)
+    hash = JSON.parse(input)
 
-    data[sub_key]
+    hash[sub_key]
   end
 
 end

@@ -9,7 +9,7 @@ class Car
   end
 
   def self.create_from_array(arr)
-    self.new(arr['id'], arr['price_per_day'], arr['price_per_km'])
+    self.new(arr["id"], arr["price_per_day"], arr["price_per_km"])
   end
 
 end

@@ -1,34 +1,25 @@
 require_relative "../../../jobs/backend/lib/Container"
 require_relative "../../../jobs/backend/lib/tools/dump"
+require_relative "../../../jobs/backend/lib/tools/compare_json_files"
+require "json"
 
-c = Container.new("./data/input.json")
+c = Container.new("./data/input.json", "../lib/config.yml")
 
-rentalData = c.rental_repo.get_all
-
-rentals = []
-rentalData.each do |item|
-  car_id = item["car_id"]
-  carData = c.car_repo.get_car_by_id(car_id)
-
-  if carData.empty?
-    raise Exception.new(sprintf("car not found, id : %s", car_id))
-  end
-
-  item["car"] = Car.create_from_array(carData)
-
-  rentals << Rental.create_from_array(item)
-end
+rentals = c.rental_service.get_all_rentals
 
 output = {}
 
-output['rentals'] = rentals.map do |rental|
+output["rentals"] = rentals.map do |rental|
   {
-      "id": rental.id,
-      "price": rental.get_cost
+    "id": rental.id,
+    "price": rental.get_raw_cost
   }
 end
 
-puts output
+IO.write("./data/output.json", JSON.generate(output))
+
+compare_json_files("./data/expected_output.json", "./data/output.json")
+
 
 
 

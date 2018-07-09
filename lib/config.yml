@@ -1,0 +1,10 @@
+config:
+    discount:
+      discount_percent_after_day:
+        1: 10 # percent
+        4: 30 # percent
+        10: 50 # percent
+    commission:
+      total: 30 # percent of rental price
+      assistance: 100 # cents / day
+      insurance: 50 # percent of total commission

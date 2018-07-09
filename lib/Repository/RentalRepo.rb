@@ -1,4 +1,4 @@
-require_relative './Repo'
+require_relative "./Repo"
 
 class RentalRepo < Repo
 
