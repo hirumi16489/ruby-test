@@ -2,11 +2,11 @@ require "date"
 
 class Rental
 
-  attr_reader :distance, :car, :start_date, :id, :end_date, :discount, :commission
-  attr_writer :discount, :commission
+  attr_reader :distance, :car, :start_date, :end_date
+  attr_accessor :discount, :commission, :id
 
-  def initialize(id, car, start_date, end_date, distance, discount = 0)
-    @id = Integer(id)
+  def initialize(car, start_date, end_date, distance, discount = 0)
+    @id = nil
     @car = car
     @start_date = DateTime.parse(start_date)
     @end_date = DateTime.parse(end_date)
@@ -16,14 +16,19 @@ class Rental
   end
 
   def self.create_from_array(arr)
-    self.new(
-        arr["id"],
+    ob = self.new(
         arr["car"],
         arr["start_date"],
         arr["end_date"],
         arr["distance"],
         arr["discount"].nil?? 0: arr["discount"]
     )
+
+    if !arr["id"].nil?
+      ob.id = arr["id"]
+    end
+
+    return ob
   end
 
   def get_period
@@ -46,4 +51,18 @@ class Rental
     self.get_period_price + (@distance * car.price_per_km)
   end
 
+  def get_transactions
+    transactions = []
+
+    transactions << Transaction.new(User::DRIVER, TransactionType::DEBIT, self.get_cost)
+
+    if self.commission
+      transactions << Transaction.new(User::CAR_OWNER, TransactionType::CREDIT, (self.get_cost - self.commission.total))
+      transactions << Transaction.new(User::INSURANCE, TransactionType::CREDIT, self.commission.insurance)
+      transactions << Transaction.new(User::ASSISTANCE, TransactionType::CREDIT, self.commission.assistance)
+      transactions << Transaction.new(User::DRIVY, TransactionType::CREDIT, self.commission.drivy)
+    end
+
+    transactions
+  end
 end

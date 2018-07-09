@@ -5,7 +5,7 @@ def compare_json_files(file1, file2)
   h_2 = JSON.parse(IO.read(file2))
 
   if h_1 != h_2
-    raise Exception
+    raise Exception.new("expected output and actual output are not equal !")
   end
 
   puts "everythings went as expected ! :)"
